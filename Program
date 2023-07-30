@@ -1,0 +1,3 @@
+ s="hello i am devendra"
+for i in s:
+    print(i)

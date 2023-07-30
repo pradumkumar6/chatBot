@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+<style>
+* {
+	margin:0;
+	padding:0;
+	font-family:tahoma,sans-serif;
+	box-sizing:border-box;
+}
+body {
+	background: #1ddced;
+}
+.chatbox {
+	width:500px;
+	min-width:390px;
+	height:600px;
+	background:#fff;
+	padding:25px;
+	margin:20px auto;
+	box-shadow: 0 3px #ccc;
+	
+}
+.chatlogs {
+	padding:10px;
+	width:100%;
+	height:450px;
+	background:#eee;
+	overflow-y: scroll;
+}
+.chatlogs::-webkit-scrollbar{
+	width: 10px;
+}
+.chatlogs::-webkit-scrollbar-thumb {
+	border-radius: 5px;
+	background:rgba(0,0,0,.1);
+}
+
+.chat {
+	display:flex;
+	flex-flow: row wrap;
+	align-item: flex-start;
+	margin-bottom: 10px;
+}
+.chat .user-photo {
+	width:60px;
+	height:60px;
+	background: #ccc;
+	border-radius: 50%;
+	overflow:hidden;
+}
+.chat .user-photo img {
+	width:100%;
+	background-image:url("C:\Users\DEVENDRA\Desktop\neww\templates\robot_icon.png")
+	
+}
+.chat .chat-message {
+	width:80%;
+	padding:15px;
+	margin:5px 10px 0;
+	border-radius: 10px;
+	color: #fff;
+	font-size:20px;
+}
+.friend .chat-message {
+	background: #1adda4;
+
+}
+.self .chat-message {
+	background:#1ddce4;
+	order: -1;
+}
+.chat-form {
+	margin-top: 20px;
+	display: flex;
+	align-item: flex-start;
+}
+.chat-form textarea{
+	background: #fbfbfb;
+	width: 75%;
+	height: 50px;
+	border: 2px solid #eee;
+	border-radius: 3px;
+	resize :none;
+	padding: 10px;
+	font-size: 18px;
+	color: #333;
+}
+.chat-from textarea :focus {
+	background: #fff;
+}
+.chat-form textarea::-webkit-scrollbar{
+  width: 20px;
+  
+ }
+ .chat-form textarea::-webkit-scrollbar-thumb{
+	 border-radius: 5px;
+	 background:rbga(0,0,0,.1);
+ }
+ 
+.chat-form button{
+	background: #1ddced;
+	padding: 5px 15px;
+	color: #fff;
+	border :none;
+	margin: 0 10px;
+	border-radius: 3px;
+	box-shadow: 0 3px 0 #0eb2c1;
+	cursor: pointer;
+	-webkit-transition: background .2s ease;
+	-moz-transition: background .2s ease;
+	-o-transition: background .2s ease;
+}
+.chat-form botton:hover {
+	background: #13c8d9;
+}
+</style>
+
+
+</head>
+<body >
+	<div class="chatbox" >
+	<div class="chatlogs" id="chat_area" action="javascript:void(0)">
+	
+	
+	
+	</div>
+	<form action="javascript:void(0)">
+	<div class="chat-form" >
+	 <textarea id="tarea" placeholder="Please Enter Text" ></textarea>
+	
+	<button onclick="myFunction()">send
+	</button>
+	</form>
+	</div>
+	
+	</div>
+<script>
+	var chat_friend = '<div class="chat friend"><div class="user-photo"></div><p class="chat-message" id="para" >';
+	var chat_self = '<div class="chat self"><div class="user-photo"></div><p class="chat-message" id="response_bot">';
+	var closing_tag ='</p></div>';
+	function scrollBottom() {
+		let chatArea = document.getElementById("chat_area")
+		chatArea.scrollTo(0, chatArea.scrollHeight)
+	}
+	setInterval(scrollBottom, 1000);
+	function myFunction() {
+		let chatArea = document.getElementById("chat_area")
+		chatArea.scrollTo(0, chatArea.scrollHeight);
+		console.log(document.getElementById("tarea").value);
+		//document.getElementById("para").innerText = document.getElementById("tarea").value;
+		document.getElementById("chat_area").innerHTML += chat_friend + document.getElementById("tarea").value +closing_tag;
+		console.log(document.forms[0]);
+		
+		var XHR = new XMLHttpRequest();
+
+		// Define what happens on successful data submission
+		/*XHR.addEventListener('load', function(event) {
+			console.log(event);
+			alert('Yeah! Data sent and response loaded.');
+		});*/
+
+		// Define what happens in case of error
+		XHR.addEventListener('error', function(event) {
+			alert('Oops! Something went wrong.');
+		});
+		
+		XHR.onreadystatechange = function() {
+			if (XHR.readyState == XMLHttpRequest.DONE) {
+				// alert(XHR.responseText);
+				// document.getElementById("response_bot").innerText = XHR.responseText;
+				
+				chatArea.innerHTML += chat_self + XHR.responseText +closing_tag;
+				
+			}
+		}
+		// Set up our request
+		XHR.open('POST', 'http://127.0.0.1:5000/send', true);
+		XHR.setRequestHeader( 'Access-Control-Allow-Origin', '*');
+		XHR.setRequestHeader( 'Content-Type', 'application/json');
+		
+		// Send our FormData object; HTTP headers are set automatically
+		XHR.send(JSON.stringify({ques: document.getElementById("tarea").value}));
+		document.getElementById("tarea").value = "";
+		
+	}
+</script>
+</body>
+</html>
